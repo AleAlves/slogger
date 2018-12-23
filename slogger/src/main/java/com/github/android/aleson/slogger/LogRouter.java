@@ -10,10 +10,23 @@ public class LogRouter {
     private static boolean IS_DEVELOPMENT_BUILD;
 
     private static String TAG;
+    private static String URL;
+    private static String MEHTOD;
+
 
     public static void log(String tag, Object data, int action) {
         if (IS_DEVELOPMENT_BUILD) {
-            TAG = tag;
+            handleTag(tag);
+            LogFactory.action(action);
+            print(action, data);
+        }
+    }
+
+    public static void log(String tag, String url, String method, Object data, int action) {
+        if (IS_DEVELOPMENT_BUILD) {
+            URL = url;
+            MEHTOD = method;
+            handleTag(tag);
             LogFactory.action(action);
             print(action, data);
         }
@@ -22,19 +35,19 @@ public class LogRouter {
     private static void print(int action, Object data) {
         switch (action) {
             case LogAction.INFO:
-                Log.i(handleTag(), LogFactory.geData(data));
+                Log.i(TAG, LogFactory.geData(data));
                 break;
             case LogAction.WARN:
-                Log.w(handleTag(), LogFactory.geData(data));
+                Log.w(TAG, LogFactory.geData(data));
                 break;
             case LogAction.ERROR:
-                Log.e(handleTag(), LogFactory.geData(data));
+                Log.e(TAG, LogFactory.geData(data));
                 break;
             case LogAction.DEBUG:
-                Log.d(handleTag(), LogFactory.geData(data));
+                Log.d(TAG, LogFactory.geData(data));
                 break;
             case LogAction.RESPONSE:
-                Log.d(handleTag(), LogFactory.geData(data));
+                logLargeStringResponse(LogFactory.getResponseData(URL, MEHTOD, data));
                 break;
             default:
                 Log.i(UNEXPECTED_ACTION, "Sei lá");
@@ -42,11 +55,20 @@ public class LogRouter {
         }
     }
 
-    private static String handleTag() {
-        if (TAG == null) {
-            return DEFAULT_TAG;
+    private static void logLargeStringResponse(String str) {
+        if (str.length() > 3000) {
+            Log.d(TAG, str.substring(0, 3000));
+            logLargeStringResponse(str.substring(3000));
         } else {
-            return TAG;
+            Log.d(TAG, str);
+        }
+    }
+
+    private static void handleTag(String tag) {
+        if (tag == null) {
+            TAG = DEFAULT_TAG;
+        } else {
+            TAG = tag;
         }
     }
 

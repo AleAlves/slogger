@@ -52,11 +52,11 @@ public class SLogger {
 
     //RESPONSE
 
-    public static void r(Object data) {
-        r(null, data);
+    public static void r(String url, String mehtod, Object data) {
+        r(null, url, mehtod, data);
     }
 
-    public static void r(String tag, Object data) {
-        LogRouter.log(tag, data, LogAction.RESPONSE);
+    public static void r(String tag, String url, String mehtod, Object data) {
+        LogRouter.log(tag, url, mehtod, data, LogAction.RESPONSE);
     }
 }
